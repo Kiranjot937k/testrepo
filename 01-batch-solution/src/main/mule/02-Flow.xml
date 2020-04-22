@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd 
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<flow name="02-batch-solutionFlow" doc:id="f523cede-e292-4049-b6d7-a8270053e54c" >
+		<http:listener doc:name="Listener" doc:id="805a5b1d-2f1e-44b5-b4a6-eb11b7162210" config-ref="HTTP_Listener_config" path="/batch"/>
+		<ee:transform doc:name="Transform Message" doc:id="698b5323-7a0d-4746-bc27-b1508da2ce73" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[1,
+2,
+3,
+4,
+5,
+6,
+7,
+8,
+9,
+10,
+11,
+12,
+13,
+14,
+15,
+16,
+17,
+18,
+19,
+20,
+21,
+22,
+23,
+24,
+25,
+26,
+27,
+28,
+29,
+30,
+31,
+32,
+33,
+34,
+35,
+36,
+37,
+38,
+39,
+40,
+41,
+42,
+43,
+44,
+45,
+46,
+47,
+48,
+49,
+50,
+51,
+52,
+53,
+54,
+55,
+56,
+57,
+58,
+59,
+60,
+61,
+62,
+63,
+64,
+65,
+66,
+67,
+68,
+69,
+70,
+71,
+72,
+73,
+74,
+75,
+76,
+77,
+78,
+79,
+80,
+81,
+82,
+83,
+84,
+85,
+86,
+87,
+88,
+89,
+90,
+91,
+92,
+93,
+94,
+95,
+96,
+97,
+98,
+99,
+100
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="batch-solutionBatch_Job" doc:id="2d249ab6-f250-4615-8f3a-24fafc939991" maxFailedRecords="50">
+			<batch:process-records >
+				<batch:step name="Step1" doc:id="6f0fd9a3-4c1d-45f3-a0aa-d9e01f9b5aa2" >
+					<logger level="INFO" doc:name="Logger" doc:id="8d2e2cf0-719d-4ff5-88cf-0045e5951801" message="in step1 #[payload]"/>
+					<choice doc:name="Choice" doc:id="6631805d-6be1-4c03-b5c7-de09759b570a" >
+						<when expression="#[(payload==10) or (payload == 20) or (payload == 30)]">
+							<set-variable value="#[false]" doc:name="Set Variable" doc:id="69e0b9bd-e024-42f3-b3c1-487ab30c9429" variableName="shallprocess"/>
+							<raise-error doc:name="Raise error" doc:id="8e90d62f-4426-4341-a9fa-cf4911c322ad" type="MYERROR:APPERROR"/>
+						</when>
+						<otherwise >
+							<logger level="INFO" doc:name="Logger" doc:id="9bd3612a-bc81-4e80-9cef-160bcaa55cfb" />
+						</otherwise>
+					</choice>
+				
+</batch:step>
+				<batch:step name="Step2" doc:id="21d6e228-1f5e-4650-b8f5-bc27098cc575" acceptExpression="#[(payload mod 2)==0]">
+					<logger level="INFO" doc:name="Logger" doc:id="462af062-fe6e-4934-a51d-61bd1be00484" message="in step2 #[payload]"/>
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="bd76e231-904a-441d-b178-6f3f6b6de454" size="50">
+						<logger level="INFO" doc:name="Logger" doc:id="cedfcbbe-aa62-41b8-9b9e-386ac2d5ac63" message="#[%dw 2.0
+output application/java
+---
+{'logger in step 2 batch aggregate' : payload }]"/>
+					</batch:aggregator>
+				</batch:step>
+				<batch:step name="Step3" doc:id="d4dd6c05-fd37-48c5-ba3b-be3a434dfe16" acceptPolicy="ALL">
+					<logger level="DEBUG" doc:name="Logger" doc:id="376868e7-fe76-4840-81ce-9c5e2a136a16" message="in step3 #[payload]"/>
+				
+</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="7bee1b74-05f5-434e-a992-bc7d4adbe3de" message="#['on complete batch job 1']"/>
+			</batch:on-complete>
+		</batch:job>
+	</flow>
+	</mule>
